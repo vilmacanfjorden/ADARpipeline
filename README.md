@@ -26,14 +26,25 @@ The workflow is designed to:
 ---
 
 ## 🛠️ Tools Used
-
+- BWA mapping (for DNA), STAR (for RNA)
+- Mutect2 for variant calling
 - [bcftools](https://samtools.github.io/bcftools/) — variant filtering, merging, and intersections  
 - [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html) — variant effect annotation  
 - Python3 with `pandas`, `matplotlib`, and `venn`
 
 ---
 
-## 🧾 Pipeline Summary
+## 👩‍🍳 Pre-processing pipeline
+- Reference: hg38.fa
+- STAR mapping for RNAseq and BWA for DNA
+- MarkDuplicates (Picard): Removes duplicate reads, outputs metrics, and creates a marked BAM file.
+- SplitNCigarReads (GATK): Splits reads spanning introns to make them GATK-compatible.
+- AddOrReplaceReadGroups (Picard): Adds metadata (e.g., RGID, RGSM) required for analysis.
+- Base Recalibration (GATK BaseRecalibrator): Generates a recalibration table using known variant sites.
+- Apply BQSR (GATK ApplyBQSR): Applies recalibration to update base quality scores.
+- Variant Calling (GATK Mutect2): Detects somatic variants, generating a VCF file.
+
+## 🧾 ADAR pipeline Summary
 
 ### 1. **VCF Processing (Bash Scripts)**
 
@@ -68,30 +79,30 @@ grep "missense_variant\t" MLS-1765_all3_r3.txt > MLS-1765_all3_r3_missense.txt
 `250703_treatmentVSdmso_ALL3.py` 
 
 **Features:**  
-	•	Parses .txt files for gene-position mapping  
-	•	Compares treatment vs DMSO 3'UTR variants using Venn diagrams  
-	•	Extracts AD and AF values from VCF  
-	•	Computes max AF and AF ratio (treatment vs control)  
-	•	Saves a CSV with the final results   
+	• Parses .txt files for gene-position mapping  
+	• Compares treatment vs DMSO 3'UTR variants using Venn diagrams  
+	• Extracts AD and AF values from VCF  
+	• Computes max AF and AF ratio (treatment vs control)  
+	• Saves a CSV with the final results   
  
 **Output:**  
-	•	*_AF_Ratios_AD_3replicates_3utr.csv: Contains AF and AD data across conditions  
-	•	Venn diagram showing overlap in RNA editing events  
+	• *_AF_Ratios_AD_3replicates_3utr.csv: Contains AF and AD data across conditions  
+	• Venn diagram showing overlap in RNA editing events  
 
 ### 📈 Output CSV Columns
-	•	Position: Chromosomal position (e.g., chr12:112233-112233)
-	•	GeneName: Mapped gene symbol
-	•	AD_REF_*: Reference allele depth per sample
-	•	AD_ALT_*: Alternate allele depth per sample
-	•	AF_*: Allele frequency per sample
-	•	Max_AF_T/NT: Max AF across treated/control replicates
-	•	Max_AF_Ratio: Ratio of Max_AF_T / Max_AF_NT
+	• Position: Chromosomal position (e.g., chr12:112233-112233)
+	• GeneName: Mapped gene symbol
+	• AD_REF_*: Reference allele depth per sample
+	• AD_ALT_*: Alternate allele depth per sample
+	• AF_*: Allele frequency per sample
+	• Max_AF_T/NT: Max AF across treated/control replicates
+	• Max_AF_Ratio: Ratio of Max_AF_T / Max_AF_NT
 
 
 ### 🧼 Requirements
-	•	bcftools
-	•	htslib
-	•	Python packages:  pip install pandas matplotlib venn
+	• bcftools
+	• htslib
+	• Python packages:  pip install pandas matplotlib venn
 
 
 ### Improvments/questions: 
