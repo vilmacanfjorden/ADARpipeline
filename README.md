@@ -6,7 +6,7 @@ This repository contains scripts and documentation for identifying and analyzing
 ---
 
 ## 📂 Project Overview
-
+``` 
 The workflow is designed to:
 1. Identify RNA-specific variants by comparing RNA and DNA VCFs.
 2. Focus on potential RNA editing sites (A>G and T>C).
@@ -14,27 +14,30 @@ The workflow is designed to:
 4. Select variants in specific functional regions (e.g., 3'UTRs, missense).
 5. Compare editing patterns between treated and control (DMSO) conditions.
 6. Quantify allele frequencies (AF) and visualize overlap between conditions.
-
+```  
 ---
 
 ## 🧬 Sample Information
-
-- **Cell Lines**: MLS-1765, MLS-402, MLS-Avory  
-- **Conditions**: DMSO (control), PANO (panobinostat), AZD and combination (HDACi and BRD4i)
-- **Replicates**: 3–4 replicates per condition
-
+**Cell Lines**: MLS-1765, MLS-402, MLS-Avory   
+**Conditions**: DMSO (control), PANO (panobinostat), AZD and combination (HDACi and BRD4i)  
+**Replicates**: 3–4 replicates per condition  
+  
 ---
 
 ## 🛠️ Tools Used
+``` 
 - BWA mapping (for DNA), STAR (for RNA)
 - Mutect2 for variant calling
 - [bcftools](https://samtools.github.io/bcftools/) — variant filtering, merging, and intersections  
 - [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html) — variant effect annotation  
 - Python3 with `pandas`, `matplotlib`, and `venn`
-
+``` 
 ---
 
-## 👩‍🍳 Pre-processing pipeline
+## 👩‍🍳 Pre-processing pipeline  
+`star.sh`  
+`mutect2.sh`
+```
 - Reference: hg38.fa
 - STAR mapping for RNAseq and BWA for DNA
 - MarkDuplicates (Picard): Removes duplicate reads, outputs metrics, and creates a marked BAM file.
@@ -43,13 +46,14 @@ The workflow is designed to:
 - Base Recalibration (GATK BaseRecalibrator): Generates a recalibration table using known variant sites.
 - Apply BQSR (GATK ApplyBQSR): Applies recalibration to update base quality scores.
 - Variant Calling (GATK Mutect2): Detects somatic variants, generating a VCF file.
+```
 
 ## 🧾 ADAR pipeline Summary
 
 ### 1. **VCF Processing (Bash Scripts)**
 
-Located in `bashscripts/`. Each script performs:
-
+Located in `bashscripts/` 
+Each script performs:  
 - **DNA-RNA intersection** to retain RNA-only variants (`bcftools isec`)
 - **Merging replicates** to create a multisample VCF (`bcftools merge`)
 - **Filtering for depth and ADAR-type edits (A>G, T>C), DP>5 and in atleast 3 replicates** (`bcftools view`)
@@ -66,8 +70,8 @@ bcftools view -i '(REF="A" & ALT="G") | (REF="T" & ALT="C")' input.gz -Oz -o out
 
 ### 2. VEP Annotation & Region Extraction (CLI)
 Annotated VCFs are parsed for:
-	•	3_prime_UTR_variant
-	•	missense_variant
+	• 3_prime_UTR_variant
+	• missense_variant
  
 📝 Example commands:
 ```bash
@@ -79,36 +83,45 @@ grep "missense_variant\t" MLS-1765_all3_r3.txt > MLS-1765_all3_r3_missense.txt
 `250703_treatmentVSdmso_ALL3.py` 
 
 **Features:**  
-	• Parses .txt files for gene-position mapping  
-	• Compares treatment vs DMSO 3'UTR variants using Venn diagrams  
-	• Extracts AD and AF values from VCF  
-	• Computes max AF and AF ratio (treatment vs control)  
-	• Saves a CSV with the final results   
- 
+``` 
+• Parses .txt files for gene-position mapping  
+• Compares treatment vs DMSO 3'UTR variants using Venn diagrams  
+• Extracts AD and AF values from VCF  
+• Computes max AF and AF ratio (treatment vs control)  
+• Saves a CSV with the final results   
+ ```
+
 **Output:**  
-	• *_AF_Ratios_AD_3replicates_3utr.csv: Contains AF and AD data across conditions  
-	• Venn diagram showing overlap in RNA editing events  
+``` 
+• *_AF_Ratios_AD_3replicates_3utr.csv: Contains AF and AD data across conditions  
+• Venn diagram showing overlap in RNA editing events  
+```
 
 ### 📈 Output CSV Columns
-	• Position: Chromosomal position (e.g., chr12:112233-112233)
-	• GeneName: Mapped gene symbol
-	• AD_REF_*: Reference allele depth per sample
-	• AD_ALT_*: Alternate allele depth per sample
-	• AF_*: Allele frequency per sample
-	• Max_AF_T/NT: Max AF across treated/control replicates
-	• Max_AF_Ratio: Ratio of Max_AF_T / Max_AF_NT
-
+``` 
+• Position: Chromosomal position (e.g., chr12:112233-112233)
+• GeneName: Mapped gene symbol
+• AD_REF_*: Reference allele depth per sample
+• AD_ALT_*: Alternate allele depth per sample
+• AF_*: Allele frequency per sample
+• Max_AF_T/NT: Max AF across treated/control replicates
+• Max_AF_Ratio: Ratio of Max_AF_T / Max_AF_NT
+```  
 
 ### 🧼 Requirements
-	• bcftools
-	• htslib
-	• Python packages:  pip install pandas matplotlib venn
+``` 
+• bcftools
+• htslib
+• Python packages:  pip install pandas matplotlib venn
+```
 
 
-### Improvments/questions: 
+### Improvments/questions:
+``` 
 * Is 1st replicate MLS-1765 weird?
 * How to handle alternative allels, for example ALT: G,GT
 * How to filter the DMSO best?
 * Do you need to use QUAL filter as well?
 * Use -w1 if piping output directly
 * Remove -Oz -o from bcftools isec -C ... line already using -p which writes output to 0000.vcf inside a directory, so -Oz -o "$TREATMENT_SPECIFIC_VCF" can be ignored or misleading.
+``` 
