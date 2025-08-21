@@ -109,10 +109,17 @@ grep "missense_variant\t" MLS-1765_all3_r3.txt > MLS-1765_all3_r3_missense.txt
 ```  
 
 ### 🧼 Requirements
-``` 
-• bcftools
-• htslib
-• Python packages:  pip install pandas matplotlib venn
+```
+• star version 2.5.2b
+• picard-tools/2.9.0
+• gatk version 4.6.1.0
+• samtools version 2.0
+• bcftools version 1.16
+• htslib version 1.6
+• Python3 packages:  pip install pandas matplotlib venn
+	pandas==2.2.3
+	matplotlib==3.10.1
+	venn==0.1.3
 ```
 
 
