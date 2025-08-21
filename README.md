@@ -25,13 +25,13 @@ The workflow is designed to:
 ---
 
 ## 🛠️ Tools Used
-``` 
-- BWA mapping (for DNA), STAR (for RNA)
-- Mutect2 for variant calling
-- [bcftools](https://samtools.github.io/bcftools/) — variant filtering, merging, and intersections  
+
+- [BWA](https://bio-bwa.sourceforge.net/) mapping (for DNA), STAR (for RNA)
+- [Mutect2](https://gatk.broadinstitute.org/hc/en-us/articles/360037593851-Mutect2) for variant calling
+- [bcftools](https://samtools.github.io/bcftools/) — variant filtering, merging, and intersections   
 - [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html) — variant effect annotation  
-- Python3 with `pandas`, `matplotlib`, and `venn`
-``` 
+- Python3 with modules `pandas`, `matplotlib`, and `venn`
+  
 ---
 
 ## 👩‍🍳 Pre-processing pipeline  
